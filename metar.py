@@ -23,7 +23,10 @@ def requestMetar(icaoList):
         "https://www.aviationweather.gov/adds/dataserver_current/httpparam",
         params=payload
         )
-    return request.text
+    if request.status_code == 200:
+        return request.text
+    else:
+        raise Exception(f"Error Code {request.status_code}")
 
 # Receives a METAR XML string. Prints each ICAO raw METAR.
 def printMetar(metarXML):
