@@ -1,11 +1,9 @@
-from typing import List
 import requests
 import xmltodict
 
-format = "xml"
 hours = "1.5"
 
-def checkMetar(metarString) -> List:
+def transformMetar(metarString) -> list:
     metarString = metarString.upper()
     metarString = metarString.replace(" ", "")
     metarList = metarString.split(",")
@@ -15,34 +13,43 @@ def checkMetar(metarString) -> List:
     return metarList
 
 def requestMetar(metarList):
-    payload = {"datasource":"metars", "requestType": "retrieve", "format": format, "mostRecentForEachStation": "constraint", "hoursBeforeNow": hours, "stationString": ",".join(metarList)}
-    request = requests.get("https://www.aviationweather.gov/adds/dataserver_current/httpparam", params=payload)
+    payload = {
+        "datasource":"metars", "requestType": "retrieve", "format": "xml",
+        "mostRecentForEachStation": "constraint", "hoursBeforeNow": hours,
+        "stationString": ",".join(metarList)
+        }
+    request = requests.get(
+        "https://www.aviationweather.gov/adds/dataserver_current/httpparam",
+        params=payload)
     return request
 
-def printMetar(metarxml):
-    metardict = xmltodict.parse(metarxml.text)
-    results = int(metardict["response"]["data"]["@num_results"])
+def printMetar(metarXML):
+    metarDict = xmltodict.parse(metarXML.text)
+    data = metarDict["response"]["data"]
+    results = int(data ["@num_results"])
     if results < 1:
         print("No results found.")
     elif results == 1:
-        print(metardict["response"]["data"]["METAR"]["raw_text"])
+        print(data ["METAR"]["raw_text"])
     elif results > 1:
         for i in range(results):
-            print(metardict["response"]["data"]["METAR"][i]["raw_text"])
+            print(data ["METAR"][i]["raw_text"])
 
 def main():
     needInput = True
     metarList = []
     while needInput:
-        metarString = input("Enter a 4 digit ICAO. If multiple, separate by a comma.\n")
-        metarList = checkMetar(metarString)
+        metarString = input(
+            "Enter a 4 digit ICAO. If multiple, separate by a comma.\n"
+            )
+        metarList = transformMetar(metarString)
         if metarList == "invalid":
             print("INVALID INPUT, TRY AGAIN")
         else:
             needInput = False
             
-    metarxml = requestMetar(metarList)
-    printMetar(metarxml)
+    metarXML = requestMetar(metarList)
+    printMetar(metarXML)
 
 if __name__ == "__main__":
     main()
