@@ -1,1 +1,7 @@
+# virtualenvironment
 venv
+
+# pyinstall
+build
+dist
+metar.spec
