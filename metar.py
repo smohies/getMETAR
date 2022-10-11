@@ -7,8 +7,8 @@ hours = "1.5"
 def transformIcao(icaoString) -> list:
     icaoString = icaoString.upper().replace(" ", "")
     icaoList = icaoString.split(",")
-    for metar in icaoList:
-        if len(metar) != 4:
+    for icao in icaoList:
+        if len(icao) != 4 or not icao.isalnum():
             return "invalid"
     return icaoList
 
@@ -28,25 +28,27 @@ def requestMetar(icaoList):
     else:
         raise Exception(f"Error Code {request.status_code}")
 
-# Receives a METAR XML string. Prints each ICAO raw METAR.
-def printMetar(metarXML):
+# Receives a METAR XML string. Returns a list with each ICAO raw METAR data.
+def getRawMetar(metarXML):
     metarDict = xmltodict.parse(metarXML)
     data = metarDict["response"]["data"]
     results = int(data["@num_results"])
     if results < 1:
-        print("No results found.")
+        return ["No results found."]
     elif results == 1:
-        print(data["METAR"]["raw_text"])
+        return [data["METAR"]["raw_text"]]
     elif results > 1:
+        raws = []
         for i in range(results):
-            print(data["METAR"][i]["raw_text"])
+            raws.append(data["METAR"][i]["raw_text"])
+        return raws
 
 def main():
     needInput = True
     icaoList = []
     while needInput:
         icaoString = input(
-            "Enter a 4 digit ICAO. If multiple, separate by a comma.\n"
+            "Enter a 4 digit ICAO. If multiple, separate them by a comma.\n"
             )
         icaoList = transformIcao(icaoString)
         if icaoList == "invalid":
@@ -55,7 +57,9 @@ def main():
             needInput = False
             
     metarXML = requestMetar(icaoList)
-    printMetar(metarXML)
+    rawMetar = getRawMetar(metarXML)
+    for each in rawMetar:
+        print(each)
 
 if __name__ == "__main__":
     main()
