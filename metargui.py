@@ -1,5 +1,4 @@
 import requests
-from setuptools import Command
 import xmltodict
 from tkinter import *
 from tkinter.ttk import *
