@@ -62,6 +62,7 @@ def app_request():
 # Tkinter GUI
 window = Tk()
 window.title("getMETAR")
+window.resizable(width=False, height=False)
 
 lbl_entry = Label(master=window, text="Input a valid 4 character ICAO code. If multiple, separate them with commas")
 ent_entry = Entry(master=window, width=80)
