@@ -4,4 +4,4 @@ venv
 # pyinstall
 build
 dist
-metar.spec
+*.spec
