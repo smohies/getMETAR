@@ -3,8 +3,6 @@ import xmltodict
 from tkinter import *
 from tkinter.ttk import *
 
-hours = "1.5"
-
 # Receives a string of 4 character ICAOs separated by commas. Returns a list of ICAOs.
 def transformIcao(icaoString) -> list:
     icaoString = icaoString.upper().replace(" ", "")
@@ -18,7 +16,7 @@ def transformIcao(icaoString) -> list:
 def requestMetar(icaoList):
     payload = {
         "datasource":"metars", "requestType": "retrieve", "format": "xml",
-        "mostRecentForEachStation": "constraint", "hoursBeforeNow": hours,
+        "mostRecentForEachStation": "constraint", "hoursBeforeNow": "2",
         "stationString": ",".join(icaoList)
         }
     request = requests.get(
@@ -63,14 +61,14 @@ window = Tk()
 window.title("getMETAR")
 window.resizable(width=False, height=False)
 
-lbl_entry = Label(master=window, text="Input a valid 4 character ICAO code. If multiple, separate them with commas")
-ent_entry = Entry(master=window, width=80)
+lbl_entry = Label(master=window, text="Input a valid 4 character ICAO code. If multiple, separate them with commas.")
+ent_entry = Entry(master=window, width=50)
 btn_request = Button(master=window, text="REQUEST METAR", command=app_request)
-txt_metar = Text(master=window, width=150, height=15)
+txt_metar = Text(master=window, width=120, height=15)
 
-lbl_entry.grid(columnspan=3, row=0, pady=(20,10))
-ent_entry.grid(columnspan=3, row=1)
-btn_request.grid(column=1, row=2, pady=10)
-txt_metar.grid(columnspan=3, row=3, pady=(0,10), padx=10)
+lbl_entry.grid(columnspan=2, row=0, pady=10)
+ent_entry.grid(column=0, row=1, sticky="e", padx=5)
+btn_request.grid(column=1, row=1, sticky="w", padx=5)
+txt_metar.grid(columnspan=2, row=2, pady=10, padx=10)
 
 window.mainloop()
