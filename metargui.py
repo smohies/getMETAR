@@ -35,9 +35,9 @@ def getRawMetar(metarXML):
     results = int(data["@num_results"])
     if results < 1:
         return ["No results found."]
-    elif results == 1:
+    if results == 1:
         return [data["METAR"]["raw_text"]]
-    elif results > 1:
+    if results > 1:
         raws = []
         for i in range(results):
             raws.append(data["METAR"][i]["raw_text"])
